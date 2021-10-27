@@ -6,8 +6,6 @@ const app = express();
 
 app.use(express.json());
 
-app.use('/', (req, res) => {
-  res.status(200).send({ "health": "ok" });
-});
+require('./controllers/messagesController')(app);
 
 app.listen(process.env.PORT);
