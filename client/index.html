@@ -1,0 +1,25 @@
+<h1>✨ Impressive client front-end to send messages to the websocket server ✨</h1>
+<input id="key-input" type="key" placeholder="key">
+<input id="value-input" type="value" placeholder="value">
+
+<button onclick="sendMessage()">Send</button>
+
+<script src="https://cdn.socket.io/4.3.2/socket.io.min.js"
+  integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs" crossorigin="anonymous"></script>
+<script>
+  function sendMessage() {
+    const key = document.getElementById("key-input").value;
+    const value = document.getElementById("value-input").value;
+
+    if (!key || !value) {
+      alert("Please insert a key and a value to continue.");
+      return;
+    }
+
+
+    const socket = io("http://localhost:8111");
+
+    socket.sendMessage({ key, value });
+  }
+
+</script>
