@@ -28,7 +28,15 @@ io.on('connection', socket => {
       return;
     }
 
-    Message.create(data);
+    Message.findOneAndUpdate({ 'key': data.key }, data, { upsert: true }, function(err, doc) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+
+      console.log("New message saved!");
+      socket.broadcast.emit("savedMessage", data);
+    });
   });
 });
 

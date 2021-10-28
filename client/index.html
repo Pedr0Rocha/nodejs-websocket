@@ -1,12 +1,31 @@
 <h1>✨ Impressive client front-end to send messages to the websocket server ✨</h1>
-<input id="key-input" type="key" placeholder="key">
-<input id="value-input" type="value" placeholder="value">
 
-<button onclick="sendMessage()">Send</button>
+<div>
+  <h2>Send Message</h2>
+  <input id="key-input" type="key" placeholder="key">
+  <input id="value-input" type="value" placeholder="value">
+
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<div style="margin-top: 45px;">
+  <h2>Get Message</h2>
+  <input id="search-input" type="text" placeholder="key to search">
+  <pre id="search-result"></pre>
+
+  <button onclick="getMessage()">Search</button>
+</div>
+
+<div style="margin-top: 45px;">
+  <h2 id="new-message" hidden>! new message with the key !</h2>
+</div>
 
 <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"
   integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs" crossorigin="anonymous"></script>
+
 <script>
+  const socket = io("ws://localhost:8112");
+
   function sendMessage() {
     const keyInput = document.getElementById("key-input");
     const valueInput = document.getElementById("value-input");
@@ -16,11 +35,36 @@
       return;
     }
 
-    const socket = io("ws://localhost:8112");
-
     socket.emit('sendMessage', { key: keyInput.value, value: valueInput.value });
     keyInput.value = "";
     valueInput.value = "";
   }
+
+  function getMessage() {
+    const searchInput = document.getElementById("search-input");
+    const result = document.getElementById("search-result");
+
+    if (!searchInput.value) {
+      alert("Please insert a key to search");
+      return;
+    }
+
+    fetch(`http://localhost:8112/messages/${searchInput.value}`)
+    .then(function (response) {
+      return response.json();
+    }).then(function (data) {
+      console.log(data);
+      result.innerHTML = JSON.stringify(data, undefined, 2);
+    }).catch(function () {
+      console.log("Failed to fetch message");
+    });
+  }
+
+  socket.on('savedMessage', function(message) {
+    console.log("new message");
+    const newMessage = document.getElementById("new-message");
+    newMessage.innerHTML = `new message with the key ${message.key}`;
+    newMessage.hidden = false;
+  });
 
 </script>
