@@ -8,18 +8,19 @@
   integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs" crossorigin="anonymous"></script>
 <script>
   function sendMessage() {
-    const key = document.getElementById("key-input").value;
-    const value = document.getElementById("value-input").value;
+    const keyInput = document.getElementById("key-input");
+    const valueInput = document.getElementById("value-input");
 
-    if (!key || !value) {
+    if (!keyInput.value || !valueInput.value) {
       alert("Please insert a key and a value to continue.");
       return;
     }
 
+    const socket = io("ws://localhost:8112");
 
-    const socket = io("http://localhost:8111");
-
-    socket.sendMessage({ key, value });
+    socket.emit('sendMessage', { key: keyInput.value, value: valueInput.value });
+    keyInput.value = "";
+    valueInput.value = "";
   }
 
 </script>
